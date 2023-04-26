@@ -245,8 +245,11 @@ export function inject({ config, posthog }) {
         background: config.buttonBackground || '#1d8db9',
     })
 
-    shadow.appendChild(buttonElement)
+    if (config.useButton === 'Yes') {
+        shadow.appendChild(buttonElement)
+    }
 
+    // TODO: replace with posthog call
     const previewItemData = exampleFeatures
     const previewItems = listItemComponents(previewItemData)
     const previewList = previewItems ? `
