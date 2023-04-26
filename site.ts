@@ -248,7 +248,7 @@ export function inject({ config, posthog }) {
     shadow.appendChild(buttonElement)
 
     const previewItemData = exampleFeatures
-    const previewItems = listItems(previewItemData)
+    const previewItems = listItemComponents(previewItemData)
     const previewList = previewItems ? `
         <div class="list">
             ${previewItems}
@@ -259,14 +259,17 @@ export function inject({ config, posthog }) {
         </div>
     `
 
+    const CloseButtonComponent = (width, height) => `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+    `
 
-    const betaList = `
+    const BetaListComponent = `
         <div class='top-section'>
             <div class='title'>Beta Management</div>
             <div class='beta-list-cancel'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                </svg>
+                ${CloseButtonComponent(30, 30)}
             </div>
         </div>
         <div class="list-container">
@@ -278,7 +281,7 @@ export function inject({ config, posthog }) {
     betaListElement.id = 'beta-list'
     const listElement = Object.assign(betaListElement, {
         className: 'popup',
-        innerHTML: betaList
+        innerHTML: BetaListComponent
     })
 
     shadow.appendChild(listElement)
@@ -294,7 +297,7 @@ export function inject({ config, posthog }) {
 
 }
 
-const listItems = (items: PreviewItem[]) => items.map((item, index) =>  `
+const listItemComponents = (items: PreviewItem[]) => items.map((item, index) =>  `
         <div class='list-item' data-name='${item.name}'>
             <div>
                 <b class='list-item-name'>${item.name}</b>
