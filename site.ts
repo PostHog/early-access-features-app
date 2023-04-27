@@ -3,14 +3,9 @@
 const style = (config) => `
 
     .list-container {
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-    }
-
-    .list {
         flex: 1;
-        overflow-y: scroll;
+        flex-direction: row;
+        overflow: scroll;
     }
 
     .info {
@@ -19,12 +14,28 @@ const style = (config) => `
 
     .list-item {
         padding: 15px 30px;
-        height: 60px;
+        height: 35%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #00000026;
+
+        .list-item-name {
+            font-size: 20px;
+        }
+
+        .list-item-description {
+            font-size: 16px;
+        }
+
+        .list-item-documentation-link {
+            margin-top: 15px;
+
+            .label {
+                text-decoration: none;
+            }
+        }
     }
 
     .button {
@@ -42,8 +53,9 @@ const style = (config) => `
         padding: 15px 30px;
         display: flex;
         flex-direction: row;
+        align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #00000026;
     }
 
     .beta-list-cancel {
@@ -51,7 +63,7 @@ const style = (config) => `
     }
 
     .title {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
     }
 
@@ -72,7 +84,7 @@ const style = (config) => `
         border: 1px solid #f0f0f0;
         border-radius: 8px;
         padding-top: 5px;
-        width: 50%;
+        width: 40rem;
         height: 50%;
         box-shadow: -6px 0 16px -8px rgb(0 0 0 / 8%), -9px 0 28px 0 rgb(0 0 0 / 5%), -12px 0 48px 16px rgb(0 0 0 / 3%);
     }
@@ -101,9 +113,11 @@ const style = (config) => `
 
     /* The switch - the box around the slider */
     .switch {
+        margin-left: 10px;
+        margin-right: 10px;
         position: relative;
         display: inline-block;
-        width: 50px;
+        min-width: 50px;
         height: 24px;
     }
 
@@ -172,8 +186,13 @@ interface PreviewItem {
 const exampleFeatures: PreviewItem[] = [
     {
         name: 'Funnel Analysis',
-        description: 'Analyze user engagement and conversion throughout a user journey.',
+        description: 'Analyze user engagement and conversion throughout a user journey. Analyze user engagement and conversion throughout a user journey.',
         feature_flag_key: 'funnel-180'
+    },
+    {
+        name: 'Cohort Analysis',
+        description: 'Group users by common characteristics and analyze user behavior over time.',
+        feature_flag_key: 'cohorts-180'
     },
     {
         name: 'Cohort Analysis',
@@ -182,6 +201,11 @@ const exampleFeatures: PreviewItem[] = [
     }
 ]
 
+const exampleAsyncRequest = (callback) => {
+    setTimeout(() => {
+        callback(exampleFeatures)
+    }, 2000)
+}
 
 
 export function inject({ config, posthog }) {
@@ -208,18 +232,6 @@ export function inject({ config, posthog }) {
         closeButton?.addEventListener('click', (e) => {
             e.preventDefault()
             Object.assign(listElement.style, { display: 'none' })
-        })
-
-        previewItemData.forEach((item, index) => {
-            const checkbox = shadow.querySelector('.checkbox-' + index)
-            checkbox?.addEventListener('click', (e) => {
-                console.log(index, e.target?.checked)
-                if (e.target?.checked) {
-                    optIn(item.feature_flag_key)
-                } else {
-                    optOut(item.feature_flag_key)
-                }
-            })
         })
 
         // // Hide when clicked outside
@@ -249,19 +261,6 @@ export function inject({ config, posthog }) {
         shadow.appendChild(buttonElement)
     }
 
-    // TODO: replace with posthog call
-    const previewItemData = exampleFeatures
-    const previewItems = listItemComponents(previewItemData)
-    const previewList = previewItems ? `
-        <div class="list">
-            ${previewItems}
-        </div>
-    ` : `
-        <div class="empty-prompt">
-            No beta features opt into
-        </div>
-    `
-
     const CloseButtonComponent = (width: number, height: number) => `
         <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -270,15 +269,16 @@ export function inject({ config, posthog }) {
 
     const BetaListComponent = `
         <div class='top-section'>
-            <div class='title'>Beta Management</div>
+            <div class='title'>Early Access Features</div>
             <div class='beta-list-cancel'>
                 ${CloseButtonComponent(30, 30)}
             </div>
         </div>
-        <div class="list-container">
-            ${previewList}
+        <div id="list-container" class="list-container">
+            Loading
         </div>
     `
+    
 
     const betaListElement = document.createElement('div')
     betaListElement.id = 'beta-list'
@@ -298,6 +298,35 @@ export function inject({ config, posthog }) {
         window.addEventListener('click', clickListener)
     }
 
+    // TODO: replace with posthog call
+    exampleAsyncRequest((previewItemData) => {
+        const betaListContainer = shadow.getElementById('list-container')
+        if (betaListContainer) {
+            previewItemData.forEach((item, index) => {
+                const checkbox = shadow.querySelector('.checkbox-' + index)
+                checkbox?.addEventListener('click', (e) => {
+                    console.log(index, e.target?.checked)
+                    if (e.target?.checked) {
+                        optIn(item.feature_flag_key)
+                    } else {
+                        optOut(item.feature_flag_key)
+                    }
+                })
+            })
+            const previewItems = listItemComponents(previewItemData)
+            const previewList = previewItems ? `
+                <div class="list">
+                    ${previewItems}
+                </div>
+            ` : `
+                <div class="empty-prompt">
+                    No beta features opt into
+                </div>
+            `
+            betaListContainer.innerHTML = previewList
+        }
+    })
+
 }
 
 const listItemComponents = (items: PreviewItem[]) => items.map((item, index) =>  `
@@ -305,6 +334,9 @@ const listItemComponents = (items: PreviewItem[]) => items.map((item, index) => 
             <div>
                 <b class='list-item-name'>${item.name}</b>
                 <div class='list-item-description'>${item.description}</div>
+                <div class='list-item-documentation-link'>
+                    <a class='label' href='https://posthog.com/docs/features/feature-flags' target='_blank'>Documentation</a>
+                </div>
             </div>
             <label class="switch">
                 <input class='checkbox-${index}' type="checkbox">
