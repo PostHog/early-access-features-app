@@ -226,12 +226,12 @@ export function inject({ config, posthog }) {
     }
     const shadow = createShadow(style(config))
 
-    function optIn(feature_flag_key: string) {
-        posthog.updateFeaturePreviewEnrollment(feature_flag_key, true)
+    function optIn(flagKey: string) {
+        posthog.updateFeaturePreviewEnrollment(flagKey, true)
     }
 
-    function optOut(feature_flag_key: string) {
-        posthog.updateFeaturePreviewEnrollment(feature_flag_key, false)
+    function optOut(flagKey: string) {
+        posthog.updateFeaturePreviewEnrollment(flagKey, false)
     }
 
     function openbugBox() {
@@ -339,9 +339,9 @@ export function inject({ config, posthog }) {
                 const checkbox = shadow.querySelector('.checkbox-' + index)
                 checkbox?.addEventListener('click', (e) => {
                     if (e.target?.checked) {
-                        optIn(item.feature_flag_key)
+                        optIn(item.flagKey)
                     } else {
-                        optOut(item.feature_flag_key)
+                        optOut(item.flagKey)
                     }
                 })
             })
