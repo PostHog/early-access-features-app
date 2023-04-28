@@ -227,12 +227,11 @@ export function inject({ config, posthog }) {
     const shadow = createShadow(style(config))
 
     function optIn(flagKey: string) {
-        console.log(flagKey)
-        posthog.updateFeaturePreviewEnrollment(flagKey, 'true')
+        posthog.updateEarlyAccessFeatureEnrollment(flagKey, 'true')
     }
 
     function optOut(flagKey: string) {
-        posthog.updateFeaturePreviewEnrollment(flagKey, 'false')
+        posthog.updateEarlyAccessFeatureEnrollment(flagKey, 'false')
     }
 
     function openbugBox() {
