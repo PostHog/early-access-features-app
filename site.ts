@@ -217,34 +217,6 @@ interface PreviewItem {
     documentationUrl: string
 }
 
-const exampleFeatures: PreviewItem[] = [
-    {
-        name: 'Funnel Analysis',
-        description: 'Analyze user engagement and conversion throughout a user journey. Analyze user engagement and conversion throughout a user journey.',
-        flagKey: 'funnel-180',
-        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
-    },
-    {
-        name: 'Cohort Analysis',
-        description: 'Group users by common characteristics and analyze user behavior over time.',
-        flagKey: 'cohorts-180',
-        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
-    },
-    {
-        name: 'Cohort Analysis',
-        description: 'Group users by common characteristics and analyze user behavior over time.',
-        flagKey: 'cohorts-180',
-        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
-    }
-]
-
-const exampleAsyncRequest = (callback) => {
-    setTimeout(() => {
-        callback(exampleFeatures)
-    }, 2000)
-}
-
-
 export function inject({ config, posthog }) {
     if (config.domains) {
         const domains = config.domains.split(',').map((domain) => domain.trim())
@@ -338,13 +310,12 @@ export function inject({ config, posthog }) {
     }
 
     // TODO: replace with posthog call
-    exampleAsyncRequest((previewItemData) => {
+    posthog.getEarlyAccessFeatures((previewItemData) => {
         const betaListContainer = shadow.getElementById('list-container')
         if (betaListContainer) {
             previewItemData.forEach((item, index) => {
                 const checkbox = shadow.querySelector('.checkbox-' + index)
                 checkbox?.addEventListener('click', (e) => {
-                    console.log(index, e.target?.checked)
                     if (e.target?.checked) {
                         optIn(item.feature_flag_key)
                     } else {
