@@ -38,6 +38,10 @@ const style = (config) => `
         }
     }
 
+    .list-content {
+        margin-right: 20px;
+    }
+
     .button {
         position: fixed;
         bottom: 20px;
@@ -136,68 +140,101 @@ const style = (config) => `
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #ccc;
+        background-color: #00000026;
         -webkit-transition: .4s;
-        transition: .4s;
+        transition: background-color .4s;
+        cursor: pointer;
     }
 
     .slider:before {
         position: absolute;
         content: "";
-        height: 27px;
-        width: 27px;
-        left: -1px;
-        bottom: -1px;
-        background-color: gray;
-        -webkit-transition: .4s;
-        transition: .4s;
+        height: 20px;
+        width: 20px;
+        left: -10px;
+        bottom: -6px;
+        background-color: #ffffff;
+        -webkit-transition: .2s;
+        transition: .2s;
+        border: 2px solid #00000026;
     }
 
     input:checked + .slider {
-        background-color: #2196F3;
+        background-color: #00000026;
     }
 
     input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
+        box-shadow: 0 0 1px #00000026;
+        background-color: #e8edff;
     }
 
     input:checked + .slider:before {
         -webkit-transform: translateX(26px);
         -ms-transform: translateX(26px);
         transform: translateX(26px);
+        background-color: #1d4aff;
     }
 
     /* Rounded sliders */
     .slider.round {
         border-radius: 20px;
+        height: 10px;
+        width: 30px;
+        background-color: #00000026;
     }
 
     .slider.round:before {
         border-radius: 50%;
+    }
+
+    .loader-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50%;
+        width: 100%;
+    }
+
+    .loader {
+        border: 8px solid #00000026; /* Light grey */
+        border-top: 8px solid #1d4aff; /* Blue */
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 2s linear infinite;
+    }
+      
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 `
 
 interface PreviewItem {
     name: string
     description: string
-    feature_flag_key: string
+    flagKey: string
+    documentationUrl: string
 }
 
 const exampleFeatures: PreviewItem[] = [
     {
         name: 'Funnel Analysis',
         description: 'Analyze user engagement and conversion throughout a user journey. Analyze user engagement and conversion throughout a user journey.',
-        feature_flag_key: 'funnel-180'
+        flagKey: 'funnel-180',
+        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
     },
     {
         name: 'Cohort Analysis',
         description: 'Group users by common characteristics and analyze user behavior over time.',
-        feature_flag_key: 'cohorts-180'
+        flagKey: 'cohorts-180',
+        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
     },
     {
         name: 'Cohort Analysis',
         description: 'Group users by common characteristics and analyze user behavior over time.',
-        feature_flag_key: 'cohorts-180'
+        flagKey: 'cohorts-180',
+        documentationUrl: 'https://posthog.com/docs/features/feature-flags'
     }
 ]
 
@@ -275,7 +312,9 @@ export function inject({ config, posthog }) {
             </div>
         </div>
         <div id="list-container" class="list-container">
-            Loading
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
         </div>
     `
     
@@ -331,11 +370,11 @@ export function inject({ config, posthog }) {
 
 const listItemComponents = (items: PreviewItem[]) => items.map((item, index) =>  `
         <div class='list-item' data-name='${item.name}'>
-            <div>
+            <div class='list-content'>
                 <b class='list-item-name'>${item.name}</b>
                 <div class='list-item-description'>${item.description}</div>
                 <div class='list-item-documentation-link'>
-                    <a class='label' href='https://posthog.com/docs/features/feature-flags' target='_blank'>Documentation</a>
+                    <a class='label' href='${item.documentationUrl}' target='_blank'>Documentation</a>
                 </div>
             </div>
             <label class="switch">
