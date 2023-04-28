@@ -227,7 +227,6 @@ export function inject({ config, posthog }) {
     const shadow = createShadow(style(config))
 
     function optIn(flagKey: string) {
-        console.log(flagKey)
         posthog.updateEarlyAccessFeatureEnrollment(flagKey, 'true')
     }
 
@@ -352,9 +351,9 @@ export function inject({ config, posthog }) {
                     const checkbox = shadow.querySelector('.checkbox-' + index)
                     checkbox?.addEventListener('click', (e) => {
                         if (e.target?.checked) {
-                            optOut(item.flagKey)
-                        } else {
                             optIn(item.flagKey)
+                        } else {
+                            optOut(item.flagKey)
                         }
                     })
                 })
