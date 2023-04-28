@@ -350,9 +350,9 @@ export function inject({ config, posthog }) {
                 const checkbox = shadow.querySelector('.checkbox-' + index)
                 checkbox?.addEventListener('click', (e) => {
                     if (e.target?.checked) {
-                        optIn(item.flagKey)
-                    } else {
                         optOut(item.flagKey)
+                    } else {
+                        optIn(item.flagKey)
                     }
                 })
             })
