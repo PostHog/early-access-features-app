@@ -347,16 +347,18 @@ export function inject({ config, posthog }) {
                 </div>
             `
             betaListContainer.innerHTML = previewList
-            previewItemData.forEach((item, index) => {
-                const checkbox = shadow.querySelector('.checkbox-' + index)
-                checkbox?.addEventListener('click', (e) => {
-                    if (e.target?.checked) {
-                        optOut(item.flagKey)
-                    } else {
-                        optIn(item.flagKey)
-                    }
+            setTimeout(() => {
+                previewItemData.forEach((item, index) => {
+                    const checkbox = shadow.querySelector('.checkbox-' + index)
+                    checkbox?.addEventListener('click', (e) => {
+                        if (e.target?.checked) {
+                            optOut(item.flagKey)
+                        } else {
+                            optIn(item.flagKey)
+                        }
+                    })
                 })
-            })
+            }, 5000)
         }
     })
 
