@@ -346,6 +346,9 @@ export function inject({ config, posthog }) {
                 </div>
             `
             betaListContainer.innerHTML = previewList
+
+            // TODO: remove settimeout
+
             setTimeout(() => {
                 previewItemData.forEach((item, index) => {
                     const checkbox = shadow.querySelector('.checkbox-' + index)
