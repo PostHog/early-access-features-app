@@ -309,6 +309,28 @@ export function inject({ config, posthog }) {
         window.addEventListener('click', clickListener)
     }
 
+    const listItemComponents = (items: PreviewItem[]) => {
+        return items.map((item, index) => {
+            const checked = posthog.isFeatureEnabled(item.flagKey)
+            return `
+                    <div class='list-item' data-name='${item.name}'>
+                        <div class='list-content'>
+                            <b class='list-item-name'>${item.name}</b>
+                            <div class='list-item-description'>${item.description}</div>
+                            <div class='list-item-documentation-link'>
+                                <a class='label' href='${item.documentationUrl}' target='_blank'>Documentation</a>
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input class='checkbox-${index}' type="checkbox" checked=${checked}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                `
+            
+        }).join('')
+    }
+
     // TODO: replace with posthog call
     posthog.getEarlyAccessFeatures((previewItemData) => {
         const betaListContainer = shadow.getElementById('list-container')
@@ -339,22 +361,6 @@ export function inject({ config, posthog }) {
 
 }
 
-const listItemComponents = (items: PreviewItem[]) => items.map((item, index) =>  `
-        <div class='list-item' data-name='${item.name}'>
-            <div class='list-content'>
-                <b class='list-item-name'>${item.name}</b>
-                <div class='list-item-description'>${item.description}</div>
-                <div class='list-item-documentation-link'>
-                    <a class='label' href='${item.documentationUrl}' target='_blank'>Documentation</a>
-                </div>
-            </div>
-            <label class="switch">
-                <input class='checkbox-${index}' type="checkbox">
-                <span class="slider round"></span>
-            </label>
-        </div>
-    `
-).join('')
 
 function createShadow(style?: string): ShadowRoot {
   const div = document.createElement('div')
