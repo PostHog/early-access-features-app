@@ -322,7 +322,7 @@ export function inject({ config, posthog }) {
                             </div>
                         </div>
                         <label class="switch">
-                            <input class='checkbox-${index}' type="checkbox" checked=${checked}>
+                            <input class='checkbox-${index}' type="checkbox" ${checked ? 'checked' : ''}>
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -335,16 +335,6 @@ export function inject({ config, posthog }) {
     posthog.getEarlyAccessFeatures((previewItemData) => {
         const betaListContainer = shadow.getElementById('list-container')
         if (betaListContainer) {
-            previewItemData.forEach((item, index) => {
-                const checkbox = shadow.querySelector('.checkbox-' + index)
-                checkbox?.addEventListener('click', (e) => {
-                    if (e.target?.checked) {
-                        optIn(item.flagKey)
-                    } else {
-                        optOut(item.flagKey)
-                    }
-                })
-            })
             const previewItems = listItemComponents(previewItemData)
             const previewList = previewItems ? `
                 <div class="list">
@@ -356,6 +346,16 @@ export function inject({ config, posthog }) {
                 </div>
             `
             betaListContainer.innerHTML = previewList
+            previewItemData.forEach((item, index) => {
+                const checkbox = shadow.querySelector('.checkbox-' + index)
+                checkbox?.addEventListener('click', (e) => {
+                    if (e.target?.checked) {
+                        optIn(item.flagKey)
+                    } else {
+                        optOut(item.flagKey)
+                    }
+                })
+            })
         }
     })
 
