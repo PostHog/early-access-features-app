@@ -360,9 +360,9 @@ export function inject({ config, posthog }) {
                         }
                     })
                 })
-            }, 5000)
+            }, 1)
         }
-    })
+    }, true) // Force reload always
 
 }
 
