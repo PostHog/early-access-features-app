@@ -46,7 +46,6 @@ const style = (config) => `
         position: fixed;
         bottom: 20px;
         right: 20px;
-        color: black;
         font-weight: normal;
         font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         text-align: left;
@@ -257,13 +256,21 @@ export function inject({ config, posthog }) {
     // TODO: Make this button a config option
     const buttonElement = Object.assign(document.createElement('button'), {
         className: 'button',
-        innerText: config.buttonText || '?',
         onclick: openbugBox,
         title: config.buttonTitle || '',
     })
+
+    buttonElement.innerHTML = `
+        <svg viewBox="0 0 100 80" width="30" height="30">
+            <rect width="100" height="10" fill="white"></rect>
+            <rect y="30" width="100" height="10" fill="white"></rect>
+            <rect y="60" width="100" height="10" fill="white"></rect>
+        </svg>
+    `
+
     Object.assign(buttonElement.style, {
-        color: config.buttonColor || 'black',
-        background: config.buttonBackground || '#1d8db9',
+        color: config.buttonColor || 'white',
+        background: config.buttonBackground || '#1d4aff',
     })
 
     if (config.useButton === 'Yes') {
