@@ -42,7 +42,7 @@ const style = (config) => `
         margin-right: 20px;
     }
 
-    .button {
+    .beta-feature-button {
         position: fixed;
         bottom: 20px;
         right: 20px;
@@ -50,6 +50,9 @@ const style = (config) => `
         font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Roboto", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         text-align: left;
         z-index: ${parseInt(config.zIndex) || 99999};
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .top-section {
@@ -92,7 +95,7 @@ const style = (config) => `
         box-shadow: -6px 0 16px -8px rgb(0 0 0 / 8%), -9px 0 28px 0 rgb(0 0 0 / 5%), -12px 0 48px 16px rgb(0 0 0 / 3%);
     }
 
-    .button {
+    .beta-feature-button {
         width: 64px;
         height: 64px;
         border-radius: 100%;
@@ -102,7 +105,7 @@ const style = (config) => `
         border: none;
         cursor: pointer;
     }
-    .button:hover {
+    .beta-feature-button:hover {
         filter: brightness(1.2);
     }
 
@@ -255,7 +258,7 @@ export function inject({ config, posthog }) {
 
     // TODO: Make this button a config option
     const buttonElement = Object.assign(document.createElement('button'), {
-        className: 'button',
+        className: 'beta-feature-button',
         onclick: openbugBox,
         title: config.buttonTitle || '',
     })
@@ -349,7 +352,7 @@ export function inject({ config, posthog }) {
                 </div>
             ` : `
                 <div class="empty-prompt">
-                    No beta features opt into
+                    No beta features available
                 </div>
             `
             betaListContainer.innerHTML = previewList
