@@ -167,7 +167,6 @@ const style = (config) => `
 
     input:focus + .slider {
         box-shadow: 0 0 1px #00000026;
-        background-color: #e8edff;
     }
 
     input:checked + .slider:before {
