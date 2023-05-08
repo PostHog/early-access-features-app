@@ -1,4 +1,4 @@
-# Beta Management App
+# Early Access Features App
 
 Give your users the ability to opt-in to features
 
