@@ -236,6 +236,39 @@ export function inject({ config, posthog }) {
     }
 
     function openbugBox() {
+
+        posthog.getEarlyAccessFeatures((previewItemData) => {
+            const betaListContainer = shadow.getElementById('list-container')
+            if (betaListContainer) {
+                const previewItems = listItemComponents(previewItemData)
+                const previewList = previewItems ? `
+                    <div class="list">
+                        ${previewItems}
+                    </div>
+                ` : `
+                    <div class="empty-prompt">
+                        No beta features available
+                    </div>
+                `
+                betaListContainer.innerHTML = previewList
+    
+                // TODO: remove settimeout
+    
+                setTimeout(() => {
+                    previewItemData.forEach((item, index) => {
+                        const checkbox = shadow.querySelector('.checkbox-' + index)
+                        checkbox?.addEventListener('click', (e) => {
+                            if (e.target?.checked) {
+                                optIn(item.flagKey)
+                            } else {
+                                optOut(item.flagKey)
+                            }
+                        })
+                    })
+                }, 1)
+            }
+        }, true) // Force reload always
+        
         Object.assign(listElement.style, { display: 'flex' })
 
         const closeButton = shadow.querySelector('.beta-list-cancel')
@@ -342,39 +375,6 @@ export function inject({ config, posthog }) {
         }
         return ''
     }
-
-    // TODO: replace with posthog call
-    posthog.getEarlyAccessFeatures((previewItemData) => {
-        const betaListContainer = shadow.getElementById('list-container')
-        if (betaListContainer) {
-            const previewItems = listItemComponents(previewItemData)
-            const previewList = previewItems ? `
-                <div class="list">
-                    ${previewItems}
-                </div>
-            ` : `
-                <div class="empty-prompt">
-                    No beta features available
-                </div>
-            `
-            betaListContainer.innerHTML = previewList
-
-            // TODO: remove settimeout
-
-            setTimeout(() => {
-                previewItemData.forEach((item, index) => {
-                    const checkbox = shadow.querySelector('.checkbox-' + index)
-                    checkbox?.addEventListener('click', (e) => {
-                        if (e.target?.checked) {
-                            optIn(item.flagKey)
-                        } else {
-                            optOut(item.flagKey)
-                        }
-                    })
-                })
-            }, 1)
-        }
-    }, true) // Force reload always
 
 }
 
