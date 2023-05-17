@@ -344,7 +344,7 @@ export function inject({ config, posthog }) {
 
     if (config.selector) {
         const clickListener = (e) => {
-            if (e.target.matches(config.selector)) {
+            if (e.target.closest(config.selector)) {
                 openbugBox()
             }
         }
