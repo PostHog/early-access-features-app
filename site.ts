@@ -253,20 +253,16 @@ export function inject({ config, posthog }) {
                 `
                 betaListContainer.innerHTML = previewList
 
-                // TODO: remove settimeout
-
-                setTimeout(() => {
-                    previewItemData.forEach((item, index) => {
-                        const checkbox = shadow.querySelector('.checkbox-' + index)
-                        checkbox?.addEventListener('click', (e) => {
-                            if (e.target?.checked) {
-                                optIn(item.flagKey)
-                            } else {
-                                optOut(item.flagKey)
-                            }
-                        })
+                previewItemData.forEach((item, index) => {
+                    const checkbox = shadow.querySelector('.checkbox-' + index)
+                    checkbox?.addEventListener('click', (e) => {
+                        if (e.target?.checked) {
+                            optIn(item.flagKey)
+                        } else {
+                            optOut(item.flagKey)
+                        }
                     })
-                }, 1)
+                })
             }
         }, true) // Force reload always
 
