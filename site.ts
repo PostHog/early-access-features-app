@@ -317,7 +317,7 @@ export function inject({ config, posthog }) {
 
     const BetaListComponent = `
         <div class='top-section'>
-            <div class='title'>Early Access Features</div>
+            <div class='title'>Enable beta features</div>
             <div class='beta-list-cancel'>
                 ${CloseButtonComponent(30, 30)}
             </div>
