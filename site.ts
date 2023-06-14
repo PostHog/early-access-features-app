@@ -228,14 +228,44 @@ export function inject({ config, posthog }) {
     const shadow = createShadow(style(config))
 
     function optIn(flagKey: string) {
-        posthog.updateEarlyAccessFeatureEnrollment(flagKey, 'true')
+        posthog.updateEarlyAccessFeatureEnrollment(flagKey, true)
     }
 
     function optOut(flagKey: string) {
-        posthog.updateEarlyAccessFeatureEnrollment(flagKey, 'false')
+        posthog.updateEarlyAccessFeatureEnrollment(flagKey, false)
     }
 
     function openbugBox() {
+        posthog.getEarlyAccessFeatures((previewItemData) => {
+            const betaListContainer = shadow.getElementById('list-container')
+            if (betaListContainer) {
+                const previewItems = listItemComponents(previewItemData)
+                const previewList = previewItems
+                    ? `
+                    <div class="list">
+                        ${previewItems}
+                    </div>
+                `
+                    : `
+                    <div class="empty-prompt">
+                        No beta features available
+                    </div>
+                `
+                betaListContainer.innerHTML = previewList
+
+                previewItemData.forEach((item, index) => {
+                    const checkbox = shadow.querySelector('.checkbox-' + index)
+                    checkbox?.addEventListener('click', (e) => {
+                        if (e.target?.checked) {
+                            optIn(item.flagKey)
+                        } else {
+                            optOut(item.flagKey)
+                        }
+                    })
+                })
+            }
+        }, true) // Force reload always
+
         Object.assign(listElement.style, { display: 'flex' })
 
         const closeButton = shadow.querySelector('.beta-list-cancel')
@@ -287,7 +317,7 @@ export function inject({ config, posthog }) {
 
     const BetaListComponent = `
         <div class='top-section'>
-            <div class='title'>Early Access Features</div>
+            <div class='title'>Enable beta features</div>
             <div class='beta-list-cancel'>
                 ${CloseButtonComponent(30, 30)}
             </div>
@@ -298,20 +328,19 @@ export function inject({ config, posthog }) {
             </div>
         </div>
     `
-    
 
     const betaListElement = document.createElement('div')
     betaListElement.id = 'beta-list'
     const listElement = Object.assign(betaListElement, {
         className: 'popup',
-        innerHTML: BetaListComponent
+        innerHTML: BetaListComponent,
     })
 
     shadow.appendChild(listElement)
 
     if (config.selector) {
         const clickListener = (e) => {
-            if (e.target.matches(config.selector)) {
+            if (e.target.closest(config.selector)) {
                 openbugBox()
             }
         }
@@ -320,16 +349,22 @@ export function inject({ config, posthog }) {
 
     const listItemComponents = (items?: PreviewItem[]) => {
         if (items) {
-            return items.map((item, index) => {
-                const checked = posthog.isFeatureEnabled(item.flagKey)
-                return `
+            return items
+                .map((item, index) => {
+                    const checked = posthog.isFeatureEnabled(item.flagKey)
+
+                    const documentationLink = item.documentationUrl
+                        ? `<div class='list-item-documentation-link'>
+                        <a class='label' href='${item.documentationUrl}' target='_blank'>Documentation</a>
+                    </div>
+                    `
+                        : ''
+                    return `
                         <div class='list-item' data-name='${item.name}'>
                             <div class='list-content'>
                                 <b class='list-item-name'>${item.name}</b>
                                 <div class='list-item-description'>${item.description}</div>
-                                <div class='list-item-documentation-link'>
-                                    <a class='label' href='${item.documentationUrl}' target='_blank'>Documentation</a>
-                                </div>
+                                ${documentationLink}
                             </div>
                             <label class="switch">
                                 <input class='checkbox-${index}' type="checkbox" ${checked ? 'checked' : ''}>
@@ -337,57 +372,22 @@ export function inject({ config, posthog }) {
                             </label>
                         </div>
                     `
-                
-            }).join('')
+                })
+                .join('')
         }
         return ''
     }
-
-    // TODO: replace with posthog call
-    posthog.getEarlyAccessFeatures((previewItemData) => {
-        const betaListContainer = shadow.getElementById('list-container')
-        if (betaListContainer) {
-            const previewItems = listItemComponents(previewItemData)
-            const previewList = previewItems ? `
-                <div class="list">
-                    ${previewItems}
-                </div>
-            ` : `
-                <div class="empty-prompt">
-                    No beta features available
-                </div>
-            `
-            betaListContainer.innerHTML = previewList
-
-            // TODO: remove settimeout
-
-            setTimeout(() => {
-                previewItemData.forEach((item, index) => {
-                    const checkbox = shadow.querySelector('.checkbox-' + index)
-                    checkbox?.addEventListener('click', (e) => {
-                        if (e.target?.checked) {
-                            optIn(item.flagKey)
-                        } else {
-                            optOut(item.flagKey)
-                        }
-                    })
-                })
-            }, 1)
-        }
-    }, true) // Force reload always
-
 }
 
-
 function createShadow(style?: string): ShadowRoot {
-  const div = document.createElement('div')
-  const shadow = div.attachShadow({ mode: 'open' })
-  if (style) {
-    const styleElement = Object.assign(document.createElement('style'), {
-      innerText: style,
-    })
-    shadow.appendChild(styleElement)
-  }
-  document.body.appendChild(div)
-  return shadow
+    const div = document.createElement('div')
+    const shadow = div.attachShadow({ mode: 'open' })
+    if (style) {
+        const styleElement = Object.assign(document.createElement('style'), {
+            innerText: style,
+        })
+        shadow.appendChild(styleElement)
+    }
+    document.body.appendChild(div)
+    return shadow
 }
