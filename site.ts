@@ -5,7 +5,7 @@ const style = (config) => `
     .list-container {
         flex: 1;
         flex-direction: row;
-        overflow: scroll;
+        overflow-y: auto;
     }
 
     .info {
