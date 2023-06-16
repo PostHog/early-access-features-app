@@ -22,11 +22,11 @@ const style = (config) => `
         border-bottom: 1px solid #00000026;
 
         .list-item-name {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .list-item-description {
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .list-item-documentation-link {
